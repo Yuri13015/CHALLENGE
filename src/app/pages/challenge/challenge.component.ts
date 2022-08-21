@@ -1,11 +1,17 @@
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { BarSeriesOption, EChartsOption, LineSeriesOption } from 'echarts';
 import moment from 'moment';
-
+import challengeData from '../../dataset.json';
 import { Asset } from '../../models/asset.model';
 import { ChallengeService } from '../../services/challenge.service';
 
 moment.locale('fr');
+
+interface DataTableInterface {
+  tableName: string;
+  tableKeys: string[];
+  tableData: any[];
+}
 
 interface SystemStackChart {
   id: string;
@@ -28,6 +34,8 @@ export class ChallengeComponent implements AfterViewInit {
   public assetsBySystemOpts: EChartsOption;
   public systemsStackedCharts: SystemStackChart[];
   public machinesOutputsOpts: EChartsOption;
+  public tables: DataTableInterface[];
+  public pieData: PieData [];
   private systemsIdsForStackedChart = ["sys002", "sys005", "sys006", "sys007"];
   private systemsIdsForAssetPieChart = ["sys005", "sys006", "sys007", "sys008", "sys009", "sys010", "sys011", "sys012", "sys013"];
   private machines: Asset[];
@@ -123,7 +131,42 @@ export class ChallengeComponent implements AfterViewInit {
    * @returns {PieData[]} sous la forme [{name, value}]
    */
   get systemByEnvData(): PieData[] {
-    return [];
+    this.pieData = [];
+    var table =[]
+    Object.keys(challengeData).forEach(model => {
+    if (model == 'systems') {
+      
+      table.push((challengeData as any)[model]);
+    }
+  })
+ var iTbalecount = (table[0].length);
+ var icountenv001 =0;
+ var icountenv002 =0;
+ var icountenv003 =0;
+ for (var i=0 ; i <= iTbalecount-1 ; i++ ) {
+
+if (table[0][i]['environment_id'] == 'env001'){
+   icountenv001 = icountenv001 +1;
+
+} else if (table[0][i]['environment_id'] == 'env002') {
+   icountenv002 = icountenv002 +1;
+} else {
+  icountenv003 = icountenv003 +1;
+}
+
+ }
+    this.pieData.push({
+      name : '"sys001"',
+    value:  icountenv001 });
+    this.pieData.push({
+      name : '"sys002"',
+    value:  icountenv002 });
+    this.pieData.push({
+      name : '"sys003"',
+    value:  icountenv003 });
+   
+
+    return this.pieData;
   }
 
   /**
@@ -131,6 +174,14 @@ export class ChallengeComponent implements AfterViewInit {
    * @returns {PieData[]} sous la forme [{name, value}]
    */
   get assetBySystemData(): PieData[] {
+    this.pieData = [];
+    var table =[]
+    Object.keys(challengeData).forEach(model => {
+      if (model == 'assets') {
+        
+        table.push((challengeData as any)[model]);
+      }
+    })
     return [];
   }
 
